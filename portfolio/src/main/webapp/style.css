@@ -1,30 +1,33 @@
 body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     background: url(images/background.jpg) no-repeat;
     background-size: cover;
     font-family: 'Century Gothic',sans-serif;
+    overflow-x: hidden;
 }
 
 #box1 {
     text-align: center;
-    width: 650px;
+    width: 35%;
     background: rgba(0, 0, 0, 0.3);
     color: white;
     margin: auto;
     padding: 8px;
-    margin-top: 1%;
+    margin-top: 2%;
 }
 
 #box2 {
     text-align: center;
-    width: 1200px;
-    height: 260px;
+    width: 64%;
+    height: 25%;
     background: rgba(0, 0, 0, 0.3);
     color: white;
     margin: auto;
     padding: 8px;
-    margin-top: 1%;
+    margin-top: 2%;
 }
 
 #box1 h1 {
@@ -38,6 +41,23 @@ body {
     font-size: 16px;
     letter-spacing: 3px;
     font-weight: 100;
+}
+
+#box1 li {
+    list-style: none;
+    display: inline-block;
+    padding: 5px;
+}
+
+#box1 li a {
+    color: white;
+    text-decoration: none;
+    font-size: 33px;
+    transition: all ease-in-out 250ms;
+}
+
+#box1 li a:hover {
+    color: #b9b9b9;
 }
 
 #box h2 {
@@ -56,32 +76,6 @@ body {
 
 #profile {
     border-radius: 50%;
-    width: 220px;
-    height: 220px;
-}
-
-footer {
-    background: rgba(0, 0, 0, .95);
-    position: fixed;
-    width: 100%;
-    height: 58px;
-    bottom: 0;
-    text-align: center;
-}
-
-footer li {
-    list-style: none;
-    display: inline-block;
-    padding: 5px;
-}
-
-footer li a {
-    color: white;
-    text-decoration: none;
-    font-size: 33px;
-    transition: all ease-in-out 250ms;
-}
-
-footer li a:hover {
-    color: #b9b9b9;
+    width: 175px;
+    height: 175px;
 }
