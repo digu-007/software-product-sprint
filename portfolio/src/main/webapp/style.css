@@ -3,6 +3,9 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+#intro {
     background: url(images/background.jpg) no-repeat;
     background-size: cover;
     font-family: 'Century Gothic',sans-serif;
@@ -28,6 +31,7 @@ body {
     margin: auto;
     padding: 8px;
     margin-top: 2%;
+    margin-bottom: 2%;
 }
 
 #box1 h1 {
@@ -43,24 +47,25 @@ body {
     font-weight: 100;
 }
 
-#box1 li {
+#intro #box1 li {
     list-style: none;
     display: inline-block;
     padding: 5px;
 }
 
-#box1 li a {
+
+#intro #box1 li a {
     color: white;
     text-decoration: none;
     font-size: 33px;
     transition: all ease-in-out 250ms;
 }
 
-#box1 li a:hover {
+#intro #box1 li a:hover {
     color: #b9b9b9;
 }
 
-#box h2 {
+#box2 h2 {
     font-size: 35px;
     letter-spacing: 3px;
     font-weight: 100;
@@ -78,4 +83,79 @@ body {
     border-radius: 50%;
     width: 175px;
     height: 175px;
+}
+
+#comment-section {
+    background-size: cover;
+    font-family: 'Century Gothic',sans-serif;
+    overflow-x: hidden;
+}
+
+#comment-heading {
+    text-align: center;
+    font-size: 38px;
+    letter-spacing: 3px;
+    font-weight: 100;
+}
+
+#box3 {
+    text-align: center;
+    width: 64%;
+    height: 25%;
+    background: rgba(0, 0, 0, 0.1);
+    margin: auto;
+    padding: 8px;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+#comment-list {
+    text-align: justify;
+    font-size: 16px;
+    letter-spacing: 3px;
+    font-weight: 100;
+}
+
+#box4 {
+    text-align: center;
+    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+#comment-section #box4 h2 {
+    font-size: 35px;
+    letter-spacing: 3px;
+    font-weight: 100;
+}
+
+#comment-section #box4 #input {
+    text-align: justify;
+    background: rgba(0, 0, 0, 0.1);
+    width: 64%;
+    height: 75px;
+    min-width: 120px;
+    min-height: 45px;
+    max-width: 1300px;
+    border: 0;
+    font-size: 16px;
+    letter-spacing: 3px;
+    font-weight: 100;
+}
+
+#comment-section #box4 #button {
+    background-color: rgb(6, 212, 6);
+    color: white;
+    border: 0;
+    margin: auto;
+    width: 85px;
+    height: 35px;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all ease-in-out 250ms;
+}
+
+#comment-section #box4 #button:hover {
+    background-color: rgb(11, 185, 11);
+    cursor: pointer;
 }
