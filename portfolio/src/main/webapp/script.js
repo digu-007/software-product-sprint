@@ -12,6 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Fetch the user status and initiates the required front end.
+function getUserStatus() {
+    fetch('/user-status').then(response => response.json()).then((userStatus) => {
+        if (userStatus.userLoggedIn) {
+            const urlToLogoutElement = document.getElementById('logout');
+            urlToLogoutElement.href = userStatus.urlToRedirect;
+
+            const hideLeaveYourCommentElement = document.getElementById('box4');
+            hideLeaveYourCommentElement.hidden = false;
+
+            const hideLogoutElement = document.getElementById('logout-form');
+            hideLogoutElement.hidden = false;
+        } else {
+            const urlToLoginElement = document.getElementById('login');
+            urlToLoginElement.href = userStatus.urlToRedirect;
+
+            const hideLoginElement = document.getElementById('login-form');
+            hideLoginElement.hidden = false;
+        }
+    });
+
+    getComments();
+}
+
 // Fetch the comment list and adds equivalent HTML code to the homepage.
 function getComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
@@ -28,7 +52,7 @@ function getComments() {
 // Create <li> item for comments
 function createListElement(comment) {
     const liElement = document.createElement('li');
-    liElement.innerText = comment.data;
+    liElement.innerText = comment.userEmail + ': ' + comment.data;
     return liElement;
 }
 
