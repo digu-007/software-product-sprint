@@ -159,3 +159,16 @@ body {
     background-color: rgb(11, 185, 11);
     cursor: pointer;
 }
+
+#comment-section #login-logout {
+    text-align: center;
+    margin: auto;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+#comment-section #login-logout h3 {
+    font-size: 25px;
+    letter-spacing: 2px;
+    font-weight: 100;
+}
