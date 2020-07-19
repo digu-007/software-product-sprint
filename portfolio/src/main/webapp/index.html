@@ -9,7 +9,7 @@
         <script src = "https://use.fontawesome.com/d1341f9b7a.js"></script>
     </head>
 
-    <body onload = "getComments()">
+    <body onload = "getUserStatus()">
         <section id = "intro">
             <div id = "box1">
                 <h1>Digvijay Janartha</h1>
@@ -37,13 +37,17 @@
             <div id = "box3">
                 <ul id = "comment-list"></ul>
             </div>
-            <div id = "box4">
+            <div id = "box4" hidden>
                 <h2 id = "leave-comment">Leave your comment below!</h2>
                 <form action = "/data" method = "POST">
                     <textarea id = "input" type = "text" name = "comment"></textarea>
                     <br> <br>
                     <input id = "button" type = "submit" value = "Comment!" />
                 </form>
+            </div>
+            <div id = "login-logout">
+                <h3 id = "login-form" hidden>To add your comments, first <a id = "login">login</a> with your Gmail.</h3>
+                <h3 id = "logout-form" hidden>Once you are done, you can <a id = "logout">logout</a> here.</h3>
             </div>
         </section>
     </body>
