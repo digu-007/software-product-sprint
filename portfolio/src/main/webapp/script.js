@@ -19,7 +19,7 @@ function getUserStatus() {
             const urlToLogoutElement = document.getElementById('logout');
             urlToLogoutElement.href = userStatus.urlToRedirect;
 
-            const hideLeaveYourCommentElement = document.getElementById('box4');
+            const hideLeaveYourCommentElement = document.getElementById('comment-box');
             hideLeaveYourCommentElement.hidden = false;
 
             const hideLogoutElement = document.getElementById('logout-form');
