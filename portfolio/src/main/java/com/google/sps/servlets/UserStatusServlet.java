@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/user-status")
 public class UserStatusServlet extends HttpServlet {
 
+    private Gson gson = new Gson();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
@@ -28,8 +30,6 @@ public class UserStatusServlet extends HttpServlet {
         }
 
         UserStatus userStatus = new UserStatus(userLoggedIn, urlToRedirect);
-
-        Gson gson = new Gson();
 
         response.setContentType("application/json;");
         response.getWriter().println(gson.toJson(userStatus));

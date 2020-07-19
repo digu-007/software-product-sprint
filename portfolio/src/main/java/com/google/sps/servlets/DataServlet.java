@@ -31,11 +31,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-// import javax.servlet.ServletException;
 
 /** Servlet that handles data of comment section. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+
+    private Gson gson = new Gson();
+    private List<Comment> comments;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,19 +46,9 @@ public class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
-        List<Comment> comments = new ArrayList<>();
-        for (Entity entity : results.asIterable()) {
-            long id = entity.getKey().getId();
-            String data = (String) entity.getProperty("data");
-            String userEmail = (String) entity.getProperty("userEmail");
-            long timestamp = (long) entity.getProperty("timestamp");
-
-            Comment comment = new Comment(id, data, userEmail, timestamp);
-            comments.add(comment);
-        }
+        comments = new ArrayList<>();
+        addComments(results);
         
-        Gson gson = new Gson();
-
         response.setContentType("application/json;");
         response.getWriter().println(gson.toJson(comments));
     }
@@ -73,7 +65,7 @@ public class DataServlet extends HttpServlet {
         String data = request.getParameter("comment");
         String userEmail = userService.getCurrentUser().getEmail();
 
-        if (checkValid(data)) {
+        if (checkCharacterOtherThanWhitespace(data)) {
             long timestamp = System.currentTimeMillis();
 
             Entity commentEntity = new Entity("Comment");
@@ -88,27 +80,30 @@ public class DataServlet extends HttpServlet {
         response.sendRedirect("/index.html");
     }
 
-    /** Checks if comment is valid or not. */
-    private boolean checkValid(String data) {
-        boolean valid = true;
+    /** Convert entities into Comment and populates the ArrayList. */
+    private void addComments(PreparedQuery results) {
 
-        if (data.length() > 0) {
-            boolean text_exist = false;
-            for (int i = 0; i < data.length(); ++i) {
-                char cur = data.charAt(i);
-                if (cur != ' ' && cur != '\n' && cur != '\t' && cur != '\r') {
-                    text_exist = true;
-                    break;
-                }
-            }
+        String dataProperty = "data";
+        String userEmailProperty = "userEmail";
+        String timestampProperty = "timestamp";
 
-            if (!text_exist) {
-                valid = false;
-            }
-        } else {
-            valid = false;
+        for (Entity entity : results.asIterable()) {
+            long id = entity.getKey().getId();
+            String data = (String) entity.getProperty(dataProperty);
+            String userEmail = (String) entity.getProperty(userEmailProperty);
+            long timestamp = (long) entity.getProperty(timestampProperty);
+
+            Comment comment = new Comment(id, data, userEmail, timestamp);
+            comments.add(comment);
         }
+    }
 
-        return valid;
+    /** Checks if comment is valid or not. */
+    private boolean checkCharacterOtherThanWhitespace(String data) {
+       if (data == null) {
+           return false;
+       }
+
+       return !data.trim().isEmpty();
     }
 }
