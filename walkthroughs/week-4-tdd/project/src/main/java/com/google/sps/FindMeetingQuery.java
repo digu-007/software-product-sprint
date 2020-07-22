@@ -14,8 +14,10 @@
 
 package com.google.sps;
 
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /** 
@@ -25,45 +27,39 @@ Algorithm:
 */
 public final class FindMeetingQuery {
     
-    private long meetingDuration;
-    private ArrayList<TimeRange> overlappingRanges;
-    private Collection<String> requestedAttendees;
-    private Collection<TimeRange> requiredRanges;
+    private static final int endOfDay = 24 * 60; 
     
-    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-        overlappingRanges = new ArrayList<>();
+    public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {        
+        Collection<String> requestedAttendees = request.getAttendees();
         
-        requestedAttendees = request.getAttendees();
-        calculateOverlappingRanges(events);
+        ArrayList<TimeRange> overlappingRanges = calculateOverlappingRanges(events, requestedAttendees);
         
-        meetingDuration = request.getDuration();
-        requiredRanges = new ArrayList<>();
-        getNonOverlappingTimeRanges();
-
-        return requiredRanges;
+        long meetingDuration = request.getDuration();
+        
+        return getNonOverlappingTimeRanges(overlappingRanges, meetingDuration);
     }
 
     /** 1. Calculate overlapping ranges by iterating in all the events and finding common attendees.*/
-    private void calculateOverlappingRanges(Collection<Event> events) {  
+    private ArrayList<TimeRange> calculateOverlappingRanges(Collection<Event> events, Collection<String> requestedAttendees) {  
+        ArrayList<TimeRange> overlappingRanges = new ArrayList<>();
+
         for (Event currentEvent: events) {
             Set<String> currentEventAttendees = currentEvent.getAttendees();
-            boolean overlapRange = false;
+            List<String> overlapRange = currentEventAttendees.stream()
+                                           .filter(requestedAttendees::contains)
+                                           .collect(Collectors.toList());
 
-            for (String requestedAttendee: requestedAttendees) {
-                if (currentEventAttendees.contains(requestedAttendee)) {
-                    overlapRange = true;
-                    break;
-                }
-            }
-
-            if (overlapRange) {
+            if (overlapRange.size() > 0) {
                 overlappingRanges.add(currentEvent.getWhen());
             }
         }
+
+        return overlappingRanges;
     }
 
     /** 2. Calculate non overlapping ranges by iterating in overlappingRanges in the ascending order. */
-    private void getNonOverlappingTimeRanges() {
+    private Collection<TimeRange> getNonOverlappingTimeRanges(ArrayList<TimeRange> overlappingRanges, long meetingDuration) {
+        Collection<TimeRange> requiredRanges = new ArrayList<>();
         overlappingRanges.sort(TimeRange.ORDER_BY_START);
 
         int previousEnd = 0;
@@ -72,26 +68,23 @@ public final class FindMeetingQuery {
             int currentEnd = currentRange.end();
             int currentDuration = currentStart - previousEnd;
 
-            addRangeIfValid(currentDuration, previousEnd);           
+            if (meetingDuration <= currentDuration) {
+                TimeRange validTimeRange = TimeRange.fromStartDuration(previousEnd, currentDuration);
+                requiredRanges.add(validTimeRange);
+            }       
 
             if (previousEnd < currentEnd) {
                 previousEnd = currentEnd;
             }
         }
         
-        int endOfDay = 24 * 60;
-        int currentDuration = endOfDay - previousEnd;
+        int lastDuration = endOfDay - previousEnd;
 
-        addRangeIfValid(currentDuration, previousEnd);
-    }
-
-    /** Adds a time range if its length is atleast equal to meetingDuration. */
-    private void addRangeIfValid(int duration, int previousEnd) {
-        if (meetingDuration > duration) {
-            return;
+        if (meetingDuration <= lastDuration) {
+            TimeRange validTimeRange = TimeRange.fromStartDuration(previousEnd, lastDuration);
+            requiredRanges.add(validTimeRange);
         }
 
-        TimeRange validTimeRange = TimeRange.fromStartDuration(previousEnd, duration);
-        requiredRanges.add(validTimeRange);
+        return requiredRanges;
     }
 }
