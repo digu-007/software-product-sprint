@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/user-status")
 public class UserStatusServlet extends HttpServlet {
 
-    private Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
