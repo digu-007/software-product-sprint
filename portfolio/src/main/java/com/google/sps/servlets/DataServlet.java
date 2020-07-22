@@ -26,7 +26,6 @@ import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,18 +35,22 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    private Gson gson = new Gson();
-    private List<Comment> comments;
+    private static final Gson gson = new Gson();
+    private static final String dataProperty = "data";
+    private static final String userEmailProperty = "userEmail";
+    private static final String timestampProperty = "timestamp";
+    private static final String commentQuery = "Comment";
+    private static final String commentParameter = "comment";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+        Query query = new Query(commentQuery).addSort(timestampProperty, SortDirection.DESCENDING);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
-        comments = new ArrayList<>();
-        addComments(results);
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments = addComments(results);
         
         response.setContentType("application/json;");
         response.getWriter().println(gson.toJson(comments));
@@ -62,16 +65,16 @@ public class DataServlet extends HttpServlet {
             return;
         }
         
-        String data = request.getParameter("comment");
+        String data = request.getParameter(commentParameter);
         String userEmail = userService.getCurrentUser().getEmail();
 
         if (checkCharacterOtherThanWhitespace(data)) {
             long timestamp = System.currentTimeMillis();
 
-            Entity commentEntity = new Entity("Comment");
-            commentEntity.setProperty("data", data);
-            commentEntity.setProperty("userEmail", userEmail);
-            commentEntity.setProperty("timestamp", timestamp);
+            Entity commentEntity = new Entity(commentQuery);
+            commentEntity.setProperty(dataProperty, data);
+            commentEntity.setProperty(userEmailProperty, userEmail);
+            commentEntity.setProperty(timestampProperty, timestamp);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(commentEntity);
@@ -81,11 +84,8 @@ public class DataServlet extends HttpServlet {
     }
 
     /** Convert entities into Comment and populates the ArrayList. */
-    private void addComments(PreparedQuery results) {
-
-        String dataProperty = "data";
-        String userEmailProperty = "userEmail";
-        String timestampProperty = "timestamp";
+    private ArrayList<Comment> addComments(PreparedQuery results) {        
+        ArrayList<Comment> comments = new ArrayList<>();
 
         for (Entity entity : results.asIterable()) {
             long id = entity.getKey().getId();
@@ -96,6 +96,8 @@ public class DataServlet extends HttpServlet {
             Comment comment = new Comment(id, data, userEmail, timestamp);
             comments.add(comment);
         }
+
+        return comments;
     }
 
     /** Checks if comment is valid or not. */
