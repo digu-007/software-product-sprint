@@ -27,10 +27,11 @@ Algorithm:
 */
 public final class FindMeetingQuery {
     
-    private static final int endOfDay = 24 * 60; 
+    private static final int END_OF_DAY = 24 * 60; 
     
     public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {        
-        Collection<String> requestedAttendees = request.getAttendees();
+        List<String> requestedAttendees = request.getAttendees().stream()
+                                                 .collect(Collectors.toList());
         
         ArrayList<TimeRange> overlappingRanges = calculateOverlappingRanges(events, requestedAttendees);
         
@@ -40,14 +41,14 @@ public final class FindMeetingQuery {
     }
 
     /** 1. Calculate overlapping ranges by iterating in all the events and finding common attendees.*/
-    private ArrayList<TimeRange> calculateOverlappingRanges(Collection<Event> events, Collection<String> requestedAttendees) {  
+    private ArrayList<TimeRange> calculateOverlappingRanges(Collection<Event> events, List<String> requestedAttendees) {  
         ArrayList<TimeRange> overlappingRanges = new ArrayList<>();
 
         for (Event currentEvent: events) {
             Set<String> currentEventAttendees = currentEvent.getAttendees();
             List<String> overlapRange = currentEventAttendees.stream()
-                                           .filter(requestedAttendees::contains)
-                                           .collect(Collectors.toList());
+                                                             .filter(requestedAttendees::contains)
+                                                             .collect(Collectors.toList());
 
             if (overlapRange.size() > 0) {
                 overlappingRanges.add(currentEvent.getWhen());
@@ -58,8 +59,8 @@ public final class FindMeetingQuery {
     }
 
     /** 2. Calculate non overlapping ranges by iterating in overlappingRanges in the ascending order. */
-    private Collection<TimeRange> getNonOverlappingTimeRanges(ArrayList<TimeRange> overlappingRanges, long meetingDuration) {
-        Collection<TimeRange> requiredRanges = new ArrayList<>();
+    private ArrayList<TimeRange> getNonOverlappingTimeRanges(ArrayList<TimeRange> overlappingRanges, long meetingDuration) {
+        ArrayList<TimeRange> requiredRanges = new ArrayList<>();
         overlappingRanges.sort(TimeRange.ORDER_BY_START);
 
         int previousEnd = 0;
@@ -78,7 +79,7 @@ public final class FindMeetingQuery {
             }
         }
         
-        int lastDuration = endOfDay - previousEnd;
+        int lastDuration = END_OF_DAY - previousEnd;
 
         if (meetingDuration <= lastDuration) {
             TimeRange validTimeRange = TimeRange.fromStartDuration(previousEnd, lastDuration);
