@@ -33,7 +33,7 @@ public final class FindMeetingQuery {
         List<String> requestedAttendees = request.getAttendees().stream()
                                                  .collect(Collectors.toList());
         
-        ArrayList<TimeRange> overlappingRanges = calculateOverlappingRanges(events, requestedAttendees);
+        List<TimeRange> overlappingRanges = calculateOverlappingRanges(events, requestedAttendees);
         
         long meetingDuration = request.getDuration();
         
@@ -41,8 +41,8 @@ public final class FindMeetingQuery {
     }
 
     /** 1. Calculate overlapping ranges by iterating in all the events and finding common attendees.*/
-    private ArrayList<TimeRange> calculateOverlappingRanges(Collection<Event> events, List<String> requestedAttendees) {  
-        ArrayList<TimeRange> overlappingRanges = new ArrayList<>();
+    private List<TimeRange> calculateOverlappingRanges(Collection<Event> events, List<String> requestedAttendees) {  
+        List<TimeRange> overlappingRanges = new ArrayList<>();
 
         for (Event currentEvent: events) {
             Set<String> currentEventAttendees = currentEvent.getAttendees();
@@ -59,8 +59,8 @@ public final class FindMeetingQuery {
     }
 
     /** 2. Calculate non overlapping ranges by iterating in overlappingRanges in the ascending order. */
-    private ArrayList<TimeRange> getNonOverlappingTimeRanges(ArrayList<TimeRange> overlappingRanges, long meetingDuration) {
-        ArrayList<TimeRange> requiredRanges = new ArrayList<>();
+    private List<TimeRange> getNonOverlappingTimeRanges(List<TimeRange> overlappingRanges, long meetingDuration) {
+        List<TimeRange> requiredRanges = new ArrayList<>();
         overlappingRanges.sort(TimeRange.ORDER_BY_START);
 
         int previousEnd = 0;
